@@ -7,6 +7,9 @@ var operator = require('../Operator');
 var results = [];
 var results_by_price = [];
 var results_by_duration = [];
+var flight_depart;
+var flight_return;
+
 
 TITLE = 'Welcome to WPI';
 
@@ -51,8 +54,11 @@ router.get('/result', function(req, res, next) {
 	} else {
 		console.log("Parsing successes.")
 	}
-	// Test for the output
-	console.log(results);
+	
+	var tp = results.result;
+	
+	flight_depart = tp.depart;
+	flight_return = tp.return;
 
 	sortByPrice(results, function(response) {
 		console.log("sortByPrice function gets called. Working ...");
@@ -77,7 +83,7 @@ router.get('/result', function(req, res, next) {
 
 	res.render('result', { 
 		title: TITLE,
-	 	resultList: results });
+	 	resultList: flight_depart });
 });
 
 router.post('/result', function(req, res, next) {
@@ -176,5 +182,6 @@ function getFlightDetails(tripNumberKey, callback) {
 	}
 	callback(result);
 }
+
 
 module.exports = router;

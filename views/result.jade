@@ -40,12 +40,23 @@ html(lang= "en")
 			.container-fuild
 				.col-md-2
 				.col-md-8
-					ul.list-group
+					table(style="table-layout: fixed;")
 						for item in resultList
-							tr(class="search-result-panel", style="border-bottom: 1px solid #eaeaea;")
-								td(Style="width: 400px; padding-left: 20px")
+							tr(class="search-result-panel")
+								td(style="width: 400px; padding-left: 20px")
+								td(style="padding-left: 50 px; width: 1000px")
 									table
-										item
+										tr
+											h4 #{item.tripid}
+										tr
+											
+											h4 #{item.value[0].CodeDepart}  -  
+										
+											h5 #{item.value[0].TimeDepart}  -  
+									
+
+						else
+							li No result found.
 				.col-md-2
 
 		- if(message)
