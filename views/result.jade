@@ -27,8 +27,8 @@ html(lang= "en")
 								.collapse.navbar-collapse(id='resultNavbar')
 									.btn-group
 											.btn.btn-info(type='text', class='inactive', color='#ffffff') Sort by
-											.btn.btn-primary(type='submit', class='active', color='#ffffff', method="post", action="/result", id="price", name="price") Price
-											.btn.btn-primary(type='submit', class='active', color='#ffffff', method="post", action="/result", id="duration", name="duration") Traval Time
+											input.btn.btn-primary(type='submit', class='active', color='#ffffff', method="post", action="/result", id="price", name="price", value="Price")
+											input.btn.btn-primary(type='submit', class='active', color='#ffffff', method="post", action="/result", id="duration", name="duration", value="Traval Time")
 								.collapse.navbar-collapse(id='Tags')
 									ul.nav.navbar-nav
 										li(type='text', class='active') Flight
@@ -39,25 +39,55 @@ html(lang= "en")
 		.div
 			.container-fuild
 				.col-md-2
+					.checkbox
+						label
+							input(type="checkbox", value="Direct Flight")
+							| All
+
+					.checkbox
+						label
+							input(type="checkbox", value="Direct Flight")
+							| Direct Flight
+								
+					.checkbox
+						label
+							input(type="checkbox", value="Two legs")
+							| Two legs
+								
+					.checkbox
+						label
+							input(type="checkbox", value="Three legs")
+							| Three legs
+									
 				.col-md-8
 					table(style="table-layout: fixed;")
-						for item in resultList
-							tr(class="search-result-panel")
-								td(style="width: 400px; padding-left: 20px")
-								td(style="padding-left: 50 px; width: 1000px")
-									table
+						tr(class="search-result-panel")
+							td(style="padding-left: 0 px; width: 1000px")
+								table.table
+									thead
 										tr
-											h4 #{item.tripid}
-										tr
-											
-											h4 #{item.value[0].CodeDepart}  -  
-										
-											h5 #{item.value[0].TimeDepart}  -  
+											th Depart
+											th Destination
+											th Price
+											th Flight Schedule
+											th Show Details
+									for item in resultList
+										tbody
+											tr(method="get", action="/detail", id= item.tripid)
+												td #{item.info.depart}   
+												td #{item.info.arrival}
+												td 
+													.p Coach Price: $#{item.info.price_coach}
+													.p Firstclass Price: $#{item.info.price_firstclass}
+												td 
+													.p #{item.info.departTime}  -  #{item.info.arrivalTime}
+													.p Duration: #{item.info.flightTime} Minutes
+												td.text-center
+													a.btn.btn-primary(href='/detail?id=#{item.tripid}',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
 									
 
-						else
-							li No result found.
+									else
+										li No result found.
 				.col-md-2
 
-		- if(message)
-		div.alert.alert-danger(role="alert") !{message}
+		

@@ -31,7 +31,7 @@ html(lang= "en")
 
 
 		.div
-			form(method="get", action="/result" id="search")
+			form(method="get", action="/result", id="search")
 				.container-fluid
 					.div
 						.col-md-2
@@ -57,17 +57,17 @@ html(lang= "en")
 							.col-md-4
 								.form-group
 									label(for="dep_time") Depart:
-									input.dep-time.form-control(type="text", placeholder= "DATE", id="dep_time", name="dep_time")
+									input.dep-time.form-control(type="text", placeholder= "DATE: YYYY_MM_DD", id="dep_time", name="dep_time")
 							.col-md-4
 								.form-group
 									label(for="ret_time") Return:
-									input.ret-time.form-control(type="text", placeholder= "DATE", id="ret_time", name="ret_time")
+									input.ret-time.form-control(type="text", placeholder= "DATE: YYYY_MM_DD", id="ret_time", name="ret_time")
 
 						else
 							.col-md-8
 								.form-group
 									label(for='dep-time') Depart:
-									input.dep-time.form-control(type="text", placeholder= "DATE", id="dep_time", name="dep_time")
+									input.dep-time.form-control(type="text", placeholder= "DATE: YYYY_MM_DD", id="dep_time", name="dep_time")
 						.col-md-2
 							p
 

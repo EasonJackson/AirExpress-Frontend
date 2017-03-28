@@ -56,11 +56,41 @@ router.get('/result', function(req, res, next) {
 	}
 	
 	var tp = results.result;
+	console.log(tp);
 	
 	flight_depart = tp.depart;
 	flight_return = tp.return;
 
-	sortByPrice(results, function(response) {
+	var flight_depart_display = [];
+	console.log(flight_depart.length);
+	for(i = 0; i <= flight_depart.length - 1; i++) {
+		console.log(i);
+		//console.log(flight_depart[i]);
+		var te = flight_depart[i].value;
+		var info = {};
+		info["depart"] = dep;
+		info["arrival"] = ari;
+		info["price_coach"] = 0;
+		info["price_firstclass"] = 0;
+		info["flightTime"] = 0;
+		for (j = 0, len = te.length; j < len; j++) {
+			if(te[j].id == 0) {
+				info["departTime"] = te[j].TimeDepart;
+			}
+			info["arrivalTime"] = te[j].TimeArrival;
+			var p_coach = te[j].PriceCoach;
+			var p_firstclass = te[j].PriceFirstclass;
+			info["price_coach"] += p_coach;
+			info["price_firstclass"] += p_firstclass;
+			info["flightTime"] += te[j].FlightTime;
+		}
+		info["price_coach"] = parseFloat(info["price_coach"]).toFixed(2);
+		info["price_firstclass"] = parseFloat(info["price_firstclass"]).toFixed(2);
+		console.log({tripid: flight_depart[i].tripid, info: info});
+		flight_depart_display.push({tripid: flight_depart[i].tripid, info: info});
+	}
+
+	/*sortByPrice(results, function(response) {
 		console.log("sortByPrice function gets called. Working ...");
 		if(response == undefined || response == null) {
 			console.log("Sort failure.");
@@ -76,14 +106,14 @@ router.get('/result', function(req, res, next) {
 		} else {
 			results_by_duration = response;
 		}
-	});
+	}); */
 
 	//TODO parse results into array of items
 
 
 	res.render('result', { 
 		title: TITLE,
-	 	resultList: flight_depart });
+	 	resultList: flight_depart_display });
 });
 
 router.post('/result', function(req, res, next) {
@@ -113,8 +143,8 @@ router.post('/result', function(req, res, next) {
 /* GET detail page for flight info */
 router.get('/detail', function(req, res, next) {
 	console.log("Received request for listing details of a flight.");
-	flights = req.query.tripNumber;
-	getFlightDetails(tripNumber, function(response) {
+	tripid = req.query.id;
+	getFlightDetails(tripid, function(response) {
 		result = [];
 		if(response == undefined || response == null) {
 			console.log("Flight retreaving error.");
