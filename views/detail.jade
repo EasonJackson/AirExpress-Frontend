@@ -16,42 +16,47 @@ html(lang= "en")
 
 	body(style="padding-bottom:10rem; padding-top: 10rem")
 		.container-fluid
-			.col-md-2
-			.col-md-8
+			.col-md-1
+				p
+			.col-md-10
 				panel.panel-default(id="flightDetail", method="post", action="/confirm")
 					.panel-heading
 						h2 Flight Infomation
 					.panel-body
 						
 
-			.col-md-2
+			.col-md-1
+				p
+
+		.col-md-12
 
 		.container-fluid
-			.col-md-2
-			.col-md-8
+			.col-md-1
+				p
+			.col-md-10
 				.div
 					table.table.table-hover
-						thead(class="h2")
+						thead(class="h4")
 							tr
+								th Flight Number
 								th Departure
-								th To
 								th Destination
-						for flight in flights
+								th Flight Time
+								th Prices and Seats
+								
+						for flight in trip
 							tbody
 								tr
-									th flight.depAIR
-									th 
-									th flight.arrAIR
-								tr
-									th flight.depTime
-									th flight.flightTime
-									th flight.arrTime
-								tr
-									th Coach Seat
-									th flight.coachseat
-									th First Class
-									th flight.firstclassseat
-			.col-md-2
+									td #{flight.Airplane} - #{flight.Number} 
+									td #{flight.CodeDepart} : #{flight.TimeDepart}
+									td #{flight.CodeArrival} : #{flight.TimeArrival}
+									td #{flight.FlightTime} Minutes
+									td 
+										p Coach: $#{flight.PriceCoach} / #{flight.SeatsCoach} remaining
+										p Firstclass: $#{flight.PriceFirstclass} / #{flight.SeatsFirstclass} remaining
+								
+			.col-md-1
+				p
 
 		.col-md-12
 
@@ -60,5 +65,6 @@ html(lang= "en")
 			.col-md-8
 				.nav.navbar-right
 					.div.text-right
-						button.btn.btn-default(type="submit", style="margin-right: 10px; font-size: 110%", value="BOOK", method="post", action="/detail") BOOK
+						a.btn.btn-default(href="/result?tripid=#{tripid}&type=#{type}",type="submit", style="margin-right: 10px; font-size: 110%", value="select", method="get") Select
+						a.btn.btn-default(type="submit", style="margin-right: 10px; font-size: 110%", value="back", method="post", action="/") Back
 						

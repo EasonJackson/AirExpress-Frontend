@@ -27,8 +27,8 @@ html(lang= "en")
 								.collapse.navbar-collapse(id='resultNavbar')
 									.btn-group
 											.btn.btn-info(type='text', class='inactive', color='#ffffff') Sort by
-											a.btn.btn-primary(href="/sort?sort=price", color='#ffffff', id="price", name="price", value="Price") Price
-											a.btn.btn-primary(href="/sort?sort=duration", color='#ffffff', id="duration", name="duration", value="Traval Time") Traval Time
+											a.btn.btn-primary(href="/rawsort?sort=price", color='#ffffff', id="price", name="price", value="Price") Price
+											a.btn.btn-primary(href="/rawsort?sort=duration", color='#ffffff', id="duration", name="duration", value="Traval Time") Traval Time
 								.collapse.navbar-collapse(id='Tags')
 									ul.nav.navbar-nav
 										li(type='text', class='active') Flight
@@ -39,21 +39,17 @@ html(lang= "en")
 		.div
 			if RoundTrip
 				.col-md-2
-					.btn.btn-primary(value="Reserve") Reserve
+					.btn.btn-primary(value="Reserve", class="disabled") Reserve
 				.col-md-5
 					.container-fluid
 						.panel.panel-default
 							.panel-heading Selected Departing Trip
-							.panel-body 
-								p #{selectTrip.depart.info.depart} to #{selectTrip.depart.info.arrival} 
-								p #{selectTrip.depart.info.departTime} - #{selectTrip.depart.info.arrivalTime}
+							.panel-body #{selectDepart}
 				.col-md-5
 					.container-fluid
 						.panel.panel-default
 							.panel-heading Selected Returning Trip
-							.panel-body
-								p #{selectTrip.return.info.depart} to #{selectTrip.return.info.arrival} 
-								p #{selectTrip.return.info.departTime} - #{selectTrip.return.info.arrivalTime}
+							.panel-body #{selectReturn}
 
 			else
 				.col-md-2
@@ -62,9 +58,7 @@ html(lang= "en")
 					.container-fluid
 						.panel.panel-default
 							.panel-heading Selected Departing Trip
-							.panel-body
-								p #{selectTrip.depart.info.depart} to #{selectTrip.depart.info.arrival} 
-								p #{selectTrip.depart.info.departTime} - #{selectTrip.depart.info.arrivalTime}
+							.panel-body #{selectDepart}
 				.col-md-2
 					p
 		.col-md-12
@@ -73,7 +67,7 @@ html(lang= "en")
 				.col-md-2
 					.checkbox
 						label
-							input(type="checkbox", value="Direct Flight")
+							input(type="checkbox", value="Direct Flight", class="active")
 							| All
 
 					.checkbox
@@ -106,7 +100,6 @@ html(lang= "en")
 										for item in resultList_depart
 											tbody
 												tr
-
 													td #{item.info.depart}   
 													td #{item.info.arrival}
 													td 
@@ -118,10 +111,8 @@ html(lang= "en")
 													td.text-center
 														.btn-group-vertical
 															a.btn.btn-primary(href='/detail?id=#{item.tripid}&type=depart',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
-															if item.tripid == selectTrip.depart.tripid
-																.btn.btn-primary(name="unselect", role="button", aria-pressed='true', value="Select", type="submit") Unselect
-															else
-																a.btn.btn-primary(href="/result?tripid=#{item.tripid}&type=depart", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+														
+															.btn.btn-primary(name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 										
 
 										else
@@ -152,10 +143,7 @@ html(lang= "en")
 													td.text-center
 														.btn-group-vertical
 															a.btn.btn-primary(href='/detail?id=#{item.tripid}&type=return',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
-															if item.tripid == selectTrip.return.tripid
-																.btn.btn-primary(name="usselect", role="button", aria-pressed='true', value="Select", type="submit") Unselect
-															else
-																a.btn.btn-primary(href="/result?tripid=#{item.tripid}&type=#return", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+															.btn.btn-primary(name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 										
 
 										else
@@ -188,14 +176,8 @@ html(lang= "en")
 													td.text-center
 														.btn-group-vertical
 															a.btn.btn-primary(href='/detail?id=#{item.tripid}&type=depart',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
-															if item.tripid == selectTrip.depart.tripid
-																.btn.btn-primary(name="unselect", role="button", aria-pressed='true', value="Select", type="submit") Unselect
-															else
-																a.btn.btn-primary(href="/result?tripid=#{item.tripid}&type=depart", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
-																
+															.btn.btn-primary(name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 
 										else
 											li No result found.
 				.col-md-2
-
-	
