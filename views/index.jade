@@ -20,7 +20,7 @@ html(lang= "en")
 		.container-fluid
 			.col-md-2
 			.col-md-8		
-				+nav("Search flights", "dropdown_menu")
+				+nav("WPI Flight : Search flights", "dropdown_menu")
 					if RoundTrip
 						+nav_item( "/roundTrip", "active") Round-trip
 						+nav_item( "/oneWay" ) One-way
@@ -82,9 +82,14 @@ html(lang= "en")
 								input.form-control(class="btn.btn-primary", name="searchButton", role="button", aria-pressed='true', value="GO NOW", type="submit")
 						.col-md-5
 							p
-			- if (message)
-				div.alert.alert-danger
-	
+			.div
+				.col-md-4
+				.col-md-4
+					- if (message)
+						#message.alert.alert-danger(role="alert") !{message}
+					-else
+						#message.alert.alert-danger(role="alert", style="visibility: hidden;")
+				.col-md-4
 	
 				
 

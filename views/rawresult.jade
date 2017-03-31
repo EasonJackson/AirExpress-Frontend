@@ -26,15 +26,24 @@ html(lang= "en")
 								.navbar-brand()= "WPI Flights"
 								.collapse.navbar-collapse(id='resultNavbar')
 									.btn-group
-											.btn.btn-info(type='text', class='inactive', color='#ffffff') Sort by
-											a.btn.btn-primary(href="/rawsort?sort=price", color='#ffffff', id="price", name="price", value="Price") Price
+										a.btn.btn-info(href="/", type="text", class="inactive") Home
+										.btn.btn-info(type='text', class='inactive', color='#ffffff', disabled) Sort by
+										if sort == "origin"
+											a.btn.btn-primary(href="/sort?sort=price", color='#ffffff', id="price", name="price", value="Price") Price
 											a.btn.btn-primary(href="/rawsort?sort=duration", color='#ffffff', id="duration", name="duration", value="Traval Time") Traval Time
+										else if sort == "price"
+											a.btn.btn-primary(href="/sort?sort=price", color='#ffffff', id="price", name="price", value="Price", disabled) Price
+											a.btn.btn-primary(href="/sort?sort=duration", color='#ffffff', id="duration", name="duration", value="Traval Time", class="inactive") Traval Time
+										else if sort == "duration"
+											a.btn.btn-primary(href="/sort?sort=price", color='#ffffff', id="price", name="price", value="Price", class="inactive") Price
+											a.btn.btn-primary(href="/sort?sort=duration", color='#ffffff', id="duration", name="duration", value="Traval Time", disabled) Traval Time
+
 								.collapse.navbar-collapse(id='Tags')
 									ul.nav.navbar-nav
-										li(type='text', class='active') Flight
-										li(type='text', class='form', control='') Price	
-										li(type='text', class='form') Departure time
-										li(type='text', class='form') Arrival time
+										li(type='text', class='active')
+										li(type='text', class='form', control='')
+										li(type='text', class='form')
+										li(type='text', class='form')
 		
 		.div
 			if RoundTrip
@@ -110,9 +119,9 @@ html(lang= "en")
 														.p Duration: #{item.info.flightTime} Minutes
 													td.text-center
 														.btn-group-vertical
-															a.btn.btn-primary(href='/detail?id=#{item.tripid}&type=depart',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
+															a.btn.btn-link(href='/detail?id=#{item.tripid}&type=depart&sort=#{sort}',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
 														
-															.btn.btn-primary(name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+															a.btn.btn-link(href="/result?tripid=#{item.tripid}&type=depart&sort=#{sort}", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 										
 
 										else
@@ -142,8 +151,8 @@ html(lang= "en")
 														.p Duration: #{item.info.flightTime} Minutes
 													td.text-center
 														.btn-group-vertical
-															a.btn.btn-primary(href='/detail?id=#{item.tripid}&type=return',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
-															.btn.btn-primary(name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+															a.btn.btn-link(href='/detail?id=#{item.tripid}&type=return&sort=#{sort}',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
+															a.btn.btn-link(href="/result?tripid=#{item.tripid}&type=return&sort=#{sort}",name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 										
 
 										else
@@ -175,8 +184,8 @@ html(lang= "en")
 														.p Duration: #{item.info.flightTime} Minutes
 													td.text-center
 														.btn-group-vertical
-															a.btn.btn-primary(href='/detail?id=#{item.tripid}&type=depart',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
-															.btn.btn-primary(name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+															a.btn.btn-link(href='/detail?id=#{item.tripid}&type=depart&sort=#{sort}',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
+															a.btn.btn-link(href="/result?tripid=#{item.tripid}&type=depart&sort=#{sort}", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 
 										else
 											li No result found.
