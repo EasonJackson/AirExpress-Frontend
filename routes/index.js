@@ -1,11 +1,12 @@
 var express = require('express');
 var router = express.Router();
-//var spawn = require('child_process').spawn;
-//var rpc_client = spawn('java', ['-cp', 'java-json.jar:.', 'ExampleClient']);
 var rpc_client = require('../rpc_client/rpc_client');
 var operator = require('../Operator');
+var geo = require('../Utils/GetGeo');
+var fs = require('fs');
 
 // Raw data list
+var Airports = [];
 var raw_results = [];
 var raw_flight_depart = [];
 var raw_flight_return = [];
@@ -23,6 +24,46 @@ var RoundTrip;
 
 
 TITLE = 'Welcome to WPI';
+
+// Pre-load airports document
+fs.readFile("../Utils/Airports.txt", "utf8", function(error, data, next) {
+    if(error) {
+    	rpc_client.getAirports(function(response) {
+    		console.log("rpc_client getAirports function gets called. Retreaving data ...");
+    		if (response == undefined || response == null) {
+    			console.log("Web server initializing failure.");
+    			var err = new Error(500);
+    			next(err);
+    		}
+    		var temp = JSON.parse(response);
+    		var raw_airports = temp.result;
+    		
+    		for(airport in raw_airports) {
+    			var Airport{};
+    			Airport["Name"] = airport.Name;
+    			Airport["Code"] = airport.Code;
+    			Airport["Latitude"] = airport.Latitude;
+    			Airport["Longitude"] = airport.Longitude;
+    			Airport["Offset"] = geo.getTimezone(Airport.Latitude, Airport.Longitude);
+    			// Offset will be in miliseconds
+    			Airports.push(Airport);
+    		}
+    		// TODO write Airports to document
+		   fs.writeFile("../Utils/Airports.txt", jsonData, function(err) {
+			    if(err) {
+			        return console.log(err);
+			    }
+			});
+		});
+    } else {
+    	while(data === undefined) {
+    		require('deasync').runLoopOnce();
+    	}
+    	Airports = JSON.parse(data);
+    	//console.log("Contents of file: " + data);
+    	console.log("Airport loaded.");
+	}
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -53,7 +94,7 @@ router.get('/rawresult', function(req, res, next) {
 	console.log("Params " + dep + "+" + ari + "+" + dep_time + "+" + ret_time);
 
 	if(dep == undefined || ari == undefined 
-		|| dep_time == undefined || ret_time == undefined
+		|| dep_time == undefined
 		|| dep == null || ari == null || dep_time == null
 		|| dep == "" || ari == "" || dep_time == "") {
 		console.log("Invalid params");
@@ -321,7 +362,7 @@ router.get('/detail', function(req, res, next) {
 			trip: trip,
 			tripid: tripid,
 			sort: sort,
-			type: None
+			type: "None"
 		});
 	}
 	if(type == "depart") {

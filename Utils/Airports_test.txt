@@ -1,0 +1,261 @@
+[{
+	"Latitude": 33.641045,
+	"Code": "ATL",
+	"Longitude": -84.427764,
+	"Name": "Hartsfield-Jackson Atlanta International"
+}, {
+	"Latitude": 61.176033,
+	"Code": "ANC",
+	"Longitude": -149.990079,
+	"Name": "Ted Stevens Anchorage International Airport"
+}, {
+	"Latitude": 30.197703,
+	"Code": "AUS",
+	"Longitude": -97.666327,
+	"Name": "Austin-Bergstrom International"
+}, {
+	"Latitude": 39.177641,
+	"Code": "BWI",
+	"Longitude": -76.668446,
+	"Name": "Baltimore\/Washington International"
+}, {
+	"Latitude": 42.365855,
+	"Code": "BOS",
+	"Longitude": -71.009624,
+	"Name": "Logan International"
+}, {
+	"Latitude": 35.214688,
+	"Code": "CLT",
+	"Longitude": -80.947369,
+	"Name": "Charlotte Douglas International"
+}, {
+	"Latitude": 41.787028,
+	"Code": "MDW",
+	"Longitude": -87.752156,
+	"Name": "Chicago Midway Airport"
+}, {
+	"Latitude": 41.974397,
+	"Code": "ORD",
+	"Longitude": -87.907321,
+	"Name": "Chicago O'Hare International"
+}, {
+	"Latitude": 39.053529,
+	"Code": "CVG",
+	"Longitude": -84.66307,
+	"Name": "Cincinnati\/Northern Kentucky International"
+}, {
+	"Latitude": 41.412663,
+	"Code": "CLE",
+	"Longitude": -81.847981,
+	"Name": "Cleveland Hopkins International"
+}, {
+	"Latitude": 40.000158,
+	"Code": "CMH",
+	"Longitude": -82.887198,
+	"Name": "Port Columbus International"
+}, {
+	"Latitude": 32.900075,
+	"Code": "DFW",
+	"Longitude": -97.040378,
+	"Name": "Dallas\/Ft. Worth International - DFW Airport"
+}, {
+	"Latitude": 39.856372,
+	"Code": "DEN",
+	"Longitude": -104.67377,
+	"Name": "Denver International Airport"
+}, {
+	"Latitude": 42.216446,
+	"Code": "DTW",
+	"Longitude": -83.355427,
+	"Name": "Detroit Metropolitan Wayne County Airport"
+}, {
+	"Latitude": 26.074499,
+	"Code": "FLL",
+	"Longitude": -80.150548,
+	"Name": "Fort Lauderdale\/Hollywood International"
+}, {
+	"Latitude": 26.534055,
+	"Code": "RSW",
+	"Longitude": -81.75534,
+	"Name": "Southwest Florida International"
+}, {
+	"Latitude": 41.939117,
+	"Code": "BDL",
+	"Longitude": -72.686063,
+	"Name": "Bradley International"
+}, {
+	"Latitude": 21.324808,
+	"Code": "HNL",
+	"Longitude": -157.925181,
+	"Name": "Hawaii Honolulu International"
+}, {
+	"Latitude": 29.990494,
+	"Code": "IAH",
+	"Longitude": -95.336858,
+	"Name": "George Bush Intercontinental"
+}, {
+	"Latitude": 29.654345,
+	"Code": "HOU",
+	"Longitude": -95.276646,
+	"Name": "William P. Hobby Airport"
+}, {
+	"Latitude": 39.717102,
+	"Code": "IND",
+	"Longitude": -86.295616,
+	"Name": "Indianapolis International"
+}, {
+	"Latitude": 39.300888,
+	"Code": "MCI",
+	"Longitude": -94.712691,
+	"Name": "Kansas City International"
+}, {
+	"Latitude": 36.084256,
+	"Code": "LAS",
+	"Longitude": -115.153803,
+	"Name": "McCarran International"
+}, {
+	"Latitude": 33.944432,
+	"Code": "LAX",
+	"Longitude": -118.408359,
+	"Name": "Los Angeles International"
+}, {
+	"Latitude": 35.042345,
+	"Code": "MEM",
+	"Longitude": -89.979216,
+	"Name": "Memphis International"
+}, {
+	"Latitude": 25.796131,
+	"Code": "MIA",
+	"Longitude": -80.287014,
+	"Name": "Miami International Airport"
+}, {
+	"Latitude": 44.885002,
+	"Code": "MSP",
+	"Longitude": -93.222296,
+	"Name": "Minneapolis\/St. Paul International"
+}, {
+	"Latitude": 36.126599,
+	"Code": "BNA",
+	"Longitude": -86.677414,
+	"Name": "Nashville International"
+}, {
+	"Latitude": 29.992457,
+	"Code": "MSY",
+	"Longitude": -90.258979,
+	"Name": "Louis Armstrong International"
+}, {
+	"Latitude": 40.641519,
+	"Code": "JFK",
+	"Longitude": -73.77816,
+	"Name": "John F. Kennedy International"
+}, {
+	"Latitude": 40.777183,
+	"Code": "LGA",
+	"Longitude": -73.873955,
+	"Name": "LaGuardia International"
+}, {
+	"Latitude": 40.689722,
+	"Code": "EWR",
+	"Longitude": -74.174537,
+	"Name": "Newark Liberty International"
+}, {
+	"Latitude": 37.712811,
+	"Code": "OAK",
+	"Longitude": -122.219797,
+	"Name": "Metropolitan Oakland International"
+}, {
+	"Latitude": 34.056205,
+	"Code": "ONT",
+	"Longitude": -117.598046,
+	"Name": "Ontario International"
+}, {
+	"Latitude": 28.431427,
+	"Code": "MCO",
+	"Longitude": -81.308104,
+	"Name": "Orlando International"
+}, {
+	"Latitude": 39.874581,
+	"Code": "PHL",
+	"Longitude": -75.242423,
+	"Name": "Philadelphia International"
+}, {
+	"Latitude": 33.437551,
+	"Code": "PHX",
+	"Longitude": -112.007799,
+	"Name": "Sky Harbor International"
+}, {
+	"Latitude": 40.496029,
+	"Code": "PIT",
+	"Longitude": -80.241311,
+	"Name": "Pittsburgh International"
+}, {
+	"Latitude": 45.58999,
+	"Code": "PDX",
+	"Longitude": -122.595115,
+	"Name": "Portland International"
+}, {
+	"Latitude": 35.880301,
+	"Code": "RDU",
+	"Longitude": -78.787953,
+	"Name": "Raleigh-Durham International"
+}, {
+	"Latitude": 38.69534,
+	"Code": "SMF",
+	"Longitude": -121.590086,
+	"Name": "Sacramento International"
+}, {
+	"Latitude": 40.790139,
+	"Code": "SLC",
+	"Longitude": -111.979114,
+	"Name": "Salt Lake City International"
+}, {
+	"Latitude": 29.531407,
+	"Code": "SAT",
+	"Longitude": -98.468412,
+	"Name": "San Antonio International"
+}, {
+	"Latitude": 32.734013,
+	"Code": "SAN",
+	"Longitude": -117.193304,
+	"Name": "Lindbergh Field International"
+}, {
+	"Latitude": 37.621598,
+	"Code": "SFO",
+	"Longitude": -122.37903,
+	"Name": "San Francisco International"
+}, {
+	"Latitude": 37.364199,
+	"Code": "SJC",
+	"Longitude": -121.929023,
+	"Name": "Mineta San Jose International"
+}, {
+	"Latitude": 33.676427,
+	"Code": "SNA",
+	"Longitude": -117.867519,
+	"Name": "John Wayne Airport, Orange County"
+}, {
+	"Latitude": 47.450464,
+	"Code": "SEA",
+	"Longitude": -122.308816,
+	"Name": "Seattle-Tacoma International"
+}, {
+	"Latitude": 38.749969,
+	"Code": "STL",
+	"Longitude": -90.372176,
+	"Name": "Lambert-St. Louis International"
+}, {
+	"Latitude": 27.983757,
+	"Code": "TPA",
+	"Longitude": -82.537132,
+	"Name": "Tampa International"
+}, {
+	"Latitude": 38.953379,
+	"Code": "IAD",
+	"Longitude": -77.456571,
+	"Name": "Dulles International Airport"
+}, {
+	"Latitude": 38.851463,
+	"Code": "DCA",
+	"Longitude": -77.040242,
+	"Name": "Ronald Reagan Washington National"
+}]
