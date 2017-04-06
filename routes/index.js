@@ -2,71 +2,86 @@ var express = require('express');
 var router = express.Router();
 var rpc_client = require('../rpc_client/rpc_client');
 var operator = require('../Operator');
-var geo = require('../Utils/GetGeo');
 var fs = require('fs');
 
 // Raw data list
 var Airports = [];
-var raw_results = [];
+var raw_airports = [];
+var offset = [];
 var raw_flight_depart = [];
 var raw_flight_return = [];
+var raw_flight_depart_c = [];
+var raw_flight_return_c = [];
 
-// Parameterized data list
+// Display list
 var flight_depart_display = [];
 var flight_return_display = [];
+
+// Parameterized data list
+var flights_depart_origin = [];
+var fligths_return_oritin = [];
 var flights_depart_by_price = [];
 var flights_depart_by_duration = [];
 var flights_return_by_price = [];
 var flights_return_by_duration = [];
 
+fs.readFile("./Utils/Airports.json", function (err, data) {
+			//console.log(data);
+			Airports = JSON.parse(data);
+    		//console.log("Contents of file: " + data);
+    		console.log("Airport loaded.");
+    		//console.log(Airports);
+
+    		for(i = 0; i <= Airports.length - 1; i++) {
+				var key = Airports[i].Code;
+				var value = Airports[i].Offset;
+				//console.log(key + " " + value);
+				offset[key] = value;
+			}
+
+		});
+
 var selectTrip = {};
 var RoundTrip;
-
+var SortType;
+var Leg = {};
 
 TITLE = 'Welcome to WPI';
 
 // Pre-load airports document
-fs.readFile("../Utils/Airports.txt", "utf8", function(error, data, next) {
-    if(error) {
-    	rpc_client.getAirports(function(response) {
+
+
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+
+		// No valid data, retreaving from server and make a new json file
+		/*
+		rpc_client.getAirports(function(response) {
     		console.log("rpc_client getAirports function gets called. Retreaving data ...");
     		if (response == undefined || response == null) {
     			console.log("Web server initializing failure.");
-    			var err = new Error(500);
-    			next(err);
     		}
     		var temp = JSON.parse(response);
     		var raw_airports = temp.result;
-    		
-    		for(airport in raw_airports) {
-    			var Airport{};
-    			Airport["Name"] = airport.Name;
-    			Airport["Code"] = airport.Code;
-    			Airport["Latitude"] = airport.Latitude;
-    			Airport["Longitude"] = airport.Longitude;
-    			Airport["Offset"] = geo.getTimezone(Airport.Latitude, Airport.Longitude);
-    			// Offset will be in miliseconds
-    			Airports.push(Airport);
-    		}
-    		// TODO write Airports to document
-		   fs.writeFile("../Utils/Airports.txt", jsonData, function(err) {
+
+    		//write Airports to document
+			fs.writeFile("../Utils/Airports.json", Airports, function(err) {
 			    if(err) {
 			        return console.log(err);
 			    }
 			});
-		});
-    } else {
-    	while(data === undefined) {
-    		require('deasync').runLoopOnce();
-    	}
-    	Airports = JSON.parse(data);
-    	//console.log("Contents of file: " + data);
-    	console.log("Airport loaded.");
+    	});
+    	*/
+	
+	/*
+	for(i = 0; i <= Airports.length - 1; i++) {
+		var key = Airports[i].Code;
+		var value = Airports[i].Offset;
+		offset.push({key: value});
 	}
-});
+	*/
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
 	RoundTrip = "True";
   	res.render('index', { title: TITLE, 
   						RoundTrip: RoundTrip});
@@ -80,7 +95,8 @@ router.get('/roundTrip', function(req, res, next) {
 
 router.get('/oneWay', function(req, res, next) {
 	RoundTrip = null
-	res.render('index', { title: TITLE });
+	res.render('index', { title: TITLE,
+						  RoundTrip: RoundTrip });
 });
 
 
@@ -106,27 +122,36 @@ router.get('/rawresult', function(req, res, next) {
 	}
 
 	rpc_client.searchFlight(dep, ari, dep_time, ret_time, function(response) {
-		console.log("Web server receives response: " + response);
+		console.log("Web server receives response for searchFlight");
 		if(response == undefined || response == null) {
 			console.log("No result found.");
 		} else {
-			raw_results = JSON.parse(response);
+			var raw_results = JSON.parse(response);
+
+			if(raw_results == null) {
+				console.log("Parsing fails.");
+			} else {
+				console.log("Parsing successes.")
+			}
+			var tp = raw_results.result;
+	
+			raw_flight_depart = tp.depart;
+			raw_flight_return = tp.return;
 		}
 	});
 
 	selectTrip.depart = null;
 	selectTrip.return = null;
 
-	if(raw_results == null) {
-		console.log("Parsing fails.");
-	} else {
-		console.log("Parsing successes.")
-	}
-	
-	var tp = raw_results.result;
-	
-	raw_flight_depart = tp.depart;
-	raw_flight_return = tp.return;
+	raw_flight_depart_c = raw_flight_depart;
+	raw_flight_return_c = raw_flight_return;
+
+	flight_depart_origin = [];
+	flight_return_origin = [];
+	flights_depart_by_price = [];
+	flights_depart_by_duration = [];
+	flights_return_by_price = [];
+	flights_return_by_duration = [];
 
 	for(i = 0; i <= raw_flight_depart.length - 1; i++) {
 		//console.log(i);
@@ -140,12 +165,14 @@ router.get('/rawresult', function(req, res, next) {
 		info["flightTime"] = 0;
 		info["legs"] = 0;
 		for (j = 0, len = te.length; j <= len - 1; j++) {
+			te[j].TimeDepart = getLocalTime(te[j].CodeDepart, te[j].TimeDepart);
 			if(te[j].id == 0) {
-				info["departTime"] = te[j].TimeDepart;
+				info["departTime"] = te[j].TimeDepart;//te[j].TimeDepart;
 				info["first_flightNumber"] = te[j].Number;
 			}
 			info["legs"] ++;
-			info["arrivalTime"] = te[j].TimeArrival;
+			info["arrivalTime"] = getLocalTime(te[j].CodeArrival, te[j].TimeArrival);//te[j].TimeArrival;
+			te[j].TimeArrival = info["arrivalTime"];
 			var p_coach = te[j].PriceCoach;
 			var p_firstclass = te[j].PriceFirstclass;
 			info["price_coach"] += p_coach;
@@ -155,7 +182,7 @@ router.get('/rawresult', function(req, res, next) {
 		info["price_coach"] = parseFloat(info["price_coach"]).toFixed(2);
 		info["price_firstclass"] = parseFloat(info["price_firstclass"]).toFixed(2);
 		//console.log({tripid: raw_flight_depart[i].tripid, info: info});
-		flight_depart_display.push({tripid: raw_flight_depart[i].tripid, info: info});
+		flight_depart_origin.push({tripid: raw_flight_depart[i].tripid, info: info});
 	}
 
 	if(raw_flight_return.length == 0) {
@@ -171,182 +198,226 @@ router.get('/rawresult', function(req, res, next) {
 			info["price_firstclass"] = 0;
 			info["flightTime"] = 0;
 			info["legs"] = 0;
-			for(j = 0, len = te.length; j <= len - 1; j ++) {
+			for(j = 0, len = te.length; j <= len - 1; j++) {
+				te[j].TimeDepart = getLocalTime(te[j].CodeDepart, te[j].TimeDepart);
 				if(te[j].id == 0) {
-					info["departTime"] = te[j].TimeDepart;
+					info["departTime"] = te[j].TimeDepart;//te[j].TimeDepart;
 					info["first_flightNumber"] = te[j].Number;
 				}
 				info["legs"] ++;
-				info["arrivalTime"] = te[j].TimeArrival;
+				info["arrivalTime"] = getLocalTime(te[j].CodeArrival, te[j].TimeArrival);//te[j].TimeArrival;
+				te[j].TimeArrival = info["arrivalTime"];
 				info["price_coach"] += te[j].PriceCoach;
 				info["price_firstclass"] += te[j].PriceFirstclass;
 				info["flightTime"] += te[j].FlightTime;
 			}
 			info["price_coach"] = parseFloat(info["price_coach"].toFixed(2));
 			info["price_firstclass"] = parseFloat(info["price_firstclass"]).toFixed(2);
-			flight_return_display.push({tripid: raw_flight_return[i].tripid, info: info});
+			flight_return_origin.push({tripid: raw_flight_return[i].tripid, info: info});
 		}
 	}
 
-	sortByPrice(flight_depart_display, function(response) {
+	sortByPrice(flight_depart_origin, function(response) {
 		console.log("sortByPrice function gets called. Working ...");
 		if(response == undefined || response == null) {
 			console.log("Sort failure.");
 		} else {
-			flights_depart_by_price = flight_depart_display.concat().sort(function(a, b) {
+			flights_depart_by_price = flight_depart_origin.concat().sort(function(a, b) {
 				return a.info.price_coach - b.info.price_coach;	
 			});
 		}
 	});
 
-	sortByPrice(flight_return_display, function(response) {
+	sortByPrice(flight_return_origin, function(response) {
 		console.log("sortByPrice function gets called. Working ...");
 		if(response == undefined || response == null) {
 			console.log("Sort failure.");
 		} else {
-			flights_return_by_price = flight_return_display.concat().sort(function(a, b) {
+			flights_return_by_price = flight_return_origin.concat().sort(function(a, b) {
 				return a.info.price_coach - b.info.price_coach;	
 			});
 		}
 	});
 
-	sortByDuration(flight_depart_display, function(response) {
+	sortByDuration(flight_depart_origin, function(response) {
 		console.log("sortByDuration function gets called. Working ...");
 		if(response == undefined || response == null) {
 			console.log("Sort failure.");
 		} else {
-			flights_depart_by_duration = flight_depart_display.concat().sort(function(a, b) {
+			flights_depart_by_duration = flight_depart_origin.concat().sort(function(a, b) {
 				return a.info.flightTime - b.info.flightTime;	
 			});
 		}
 	}); 
 
-	sortByDuration(flight_return_display, function(response) {
+	sortByDuration(flight_return_origin, function(response) {
 		console.log("sortByDuration function gets called. Working ...");
 		if(response == undefined || response == null) {
 			console.log("Sort failure.");
 		} else {
-			flights_return_by_duration = flight_return_display.concat().sort(function(a, b) {
+			flights_return_by_duration = flight_return_origin.concat().sort(function(a, b) {
 				return a.info.flightTime - b.info.flightTime;	
 			});
 		}
 	}); 
 
 	//TODO parse results into array of items
+	flight_depart_display = flight_depart_origin;
+	flight_return_display = flight_return_origin;
+	SortType = "origin";
+	Leg.One = "True";
+	Leg.Two = "True";
+	Leg.Three = "True";
 
 	res.render('result', { 
 		title: TITLE,
 		selectTrip: selectTrip,
 		RoundTrip: RoundTrip,
-		sort: "origin",
+		sort: SortType,
 	 	resultList_depart: flight_depart_display,
-	 	resultList_return: flight_return_display
+	 	resultList_return: flight_return_display,
+	 	oneLeg: Leg.One,
+	 	twoLeg: Leg.Two,
+	 	three_Leg: Leg.Three
 	 	});
+});
+
+router.get('/result', function(req, res, next) {
+	res.render('result', {
+		title: TITLE,
+		selectTrip: selectTrip,
+		RoundTrip: RoundTrip,
+		sort: SortType,
+	 	resultList_depart: flight_depart_display,
+	 	resultList_return: flight_return_display,
+	 	oneLeg: Leg.One,
+	 	twoLeg: Leg.Two,
+	 	threeLeg: Leg.Three
+	 });
 });
 
 router.get('/select', function(req, res, next) {
 	var type = req.query.type;
 	var tripid = parseInt(req.query.tripid);
-	var sort = req.query.sort;
-	console.log(type);
-	console.log(tripid);
-	if(tripid == undefined || tripid == null) {
+	
+	if(tripid == undefined || tripid == null
+		|| type == undefined || type == null) {
 		res.render('result', {
 			title: TITLE,
 			selectTrip: selectTrip,
 			RoundTrip: RoundTrip,
-			sort: sort,
-		 	resultList_depart: flight_depart_display,
-		 	resultList_return: flight_return_display
+			sort: SortType,
+		 	resultList_depart: [],
+		 	resultList_return: [],
+		 	oneLeg: Leg.One,
+		 	twoLeg: Leg.Two,
+		 	threeLeg: Leg.Three
 		});
 	}
 
 	if(type == "depart") {
-		selectTrip.depart = flight_depart_display[tripid];
+		selectTrip.depart = flight_depart_origin[tripid];
 		//console.log("selectTrip:" + selectTrip);
 		
 	} else if(type == "return") {
-		selectTrip.return = flight_return_display[tripid];
+		selectTrip.return = flight_return_origin[tripid];
 		//console.log("selectTrip:" + selectTrip);	
 	}
 
-	var resultList_depart;
-	var resultList_return;
-	if(sort == "price") {
-		resultList_depart = flights_depart_by_price;
-		resultList_return = flights_return_by_price;
-	} else if(sort == "duration") {
-		resultList_depart = flights_depart_by_duration;
-		resultList_return = flights_return_by_duration;
-	} else if(sort == "origin") {
-		resultList_depart = flight_depart_display;
-		resultList_return = flight_return_display;
-	}
 	res.render('result', {
 			title: TITLE,
 			selectTrip: selectTrip,
 			RoundTrip: RoundTrip,
-			sort: sort,
-		 	resultList_depart: resultList_depart,
-		 	resultList_return: resultList_return
+			sort: SortType,
+		 	resultList_depart: flight_depart_display,
+		 	resultList_return: flight_return_display,
+		 	oneLeg: Leg.One,
+		 	twoLeg: Leg.Two,
+		 	threeLeg: Leg.Three
 	});
 });
 
 
 router.get('/unselect', function(req, res, next) {
 	var type = req.query.type;
-	//var tripid = parseInt(req.query.tripid);
-	var sort = req.query.sort;
+
 	if(type == "depart") {
 		selectTrip.depart = null;
 	} else if(type == "return") {
 		selectTrip.return = null;
 	}
-	var resultList_depart;
-	var resultList_return;
-	if(sort == "price") {
-		resultList_depart = flights_depart_by_price;
-		resultList_return = flights_return_by_price;
-	} else if(sort == "duration") {
-		resultList_depart = flights_depart_by_duration;
-		resultList_return = flights_return_by_duration;
-	} else if(sort == "origin") {
-		resultList_depart = flight_depart_display;
-		resultList_return = flight_return_display;
-	}
+
 	res.render('result', {
 			title: TITLE,
 			selectTrip: selectTrip,
 			RoundTrip: RoundTrip,
-			sort: sort,
-		 	resultList_depart: resultList_depart,
-		 	resultList_return: resultList_return
+			sort: SortType,
+		 	resultList_depart: flight_depart_display,
+		 	resultList_return: flight_return_display,
+		 	oneLeg: Leg.One,
+		 	twoLeg: Leg.Two,
+		 	threeLeg: Leg.Three
 	});
 });
 
 router.get('/sort', function(req, res, next) {
-	var sort = req.query.sort;
-	var resultList_depart;
-	var resultList_return;
-	if(sort == "price") {
-		resultList_depart = flights_depart_by_price;
-		resultList_return = flights_return_by_price;
-	} else if(sort == "duration") {
-		resultList_depart = flights_depart_by_duration;
-		resultList_return = flights_return_by_duration;
-	} else if(sort == "origin") {
-		resultList_depart = flight_depart_display;
-		resultList_return = flight_return_display;
+	SortType = req.query.sort;
+	
+	if(SortType == "price") {
+		flight_depart_display = filterResultbyLegs(Leg, flights_depart_by_price);
+		flight_return_display = filterResultbyLegs(Leg, flights_return_by_price);
+	} else if(SortType == "duration") {
+		flight_depart_display = filterResultbyLegs(Leg, flights_depart_by_duration);
+		flight_return_display = filterResultbyLegs(Leg, flights_return_by_duration);
+	} else if(SortType == "origin") {
+		flight_depart_display = filterResultbyLegs(Leg, flight_depart_origin);
+		flight_return_display = filterResultbyLegs(Leg, flight_return_origin);
 	}
+
 	res.render('result', {
 			title: TITLE,
 			selectTrip: selectTrip,
 			RoundTrip: RoundTrip,
-			sort: sort,
-		 	resultList_depart: resultList_depart,
-		 	resultList_return: resultList_return
+			sort: SortType,
+		 	resultList_depart: flight_depart_display,
+		 	resultList_return: flight_return_display,
+		 	oneLeg: Leg.One,
+		 	twoLeg: Leg.Two,
+		 	threeLeg: Leg.Three
 	});
 });
+
+router.get('/leg', function(req, res, next) {
+	One_leg = req.query.one;
+	Two_leg = req.query.two;
+	Three_leg = req.query.three;
+	Leg.One = One_leg;
+	Leg.Two = Two_leg;
+	Leg.Three = Three_leg;
+
+	if(SortType == "price") {
+		flight_depart_display = filterResultbyLegs(Leg, flights_depart_by_price);
+		flight_return_display = filterResultbyLegs(Leg, flights_return_by_price);
+	} else if(SortType == "duration") {
+		flight_depart_display = filterResultbyLegs(Leg, flights_depart_by_duration);
+		flight_return_display = filterResultbyLegs(Leg, flights_return_by_duration);
+	} else if(SortType == "origin") {
+		flight_depart_display = filterResultbyLegs(Leg, flight_depart_origin);
+		flight_return_display = filterResultbyLegs(Leg, flight_return_origin);
+	}
+
+	res.render('result', {
+			title: TITLE,
+			selectTrip: selectTrip,
+			RoundTrip: RoundTrip,
+			sort: SortType,
+		 	resultList_depart: flight_depart_display,
+		 	resultList_return: flight_return_display,
+		 	oneLeg: Leg.One,
+		 	twoLeg: Leg.Two,
+		 	threeLeg: Leg.Three
+	});
+})
 
 
 /* GET detail page for flight info */
@@ -354,14 +425,13 @@ router.get('/detail', function(req, res, next) {
 	console.log("Received request for listing details of a flight.");
 	var tripid = parseInt(req.query.id);
 	var type = req.query.type;
-	var sort = req.query.sort;
+	
 	var trip = [];
 	if(tripid == undefined || tripid == null) {
 		res.render('detail', {
 			title: TITLE,
 			trip: trip,
 			tripid: tripid,
-			sort: sort,
 			type: "None"
 		});
 	}
@@ -372,7 +442,6 @@ router.get('/detail', function(req, res, next) {
 			title: TITLE,
 			trip: trip,
 			tripid: tripid,
-			sort: sort,
 			type: type
 		});
 	} else if(type == "return") {
@@ -382,34 +451,66 @@ router.get('/detail', function(req, res, next) {
 			title: TITLE,
 			trip: trip,
 			tripid: tripid,
-			sort: sort,
 			type: type
 		});
 	}
 });
 
-router.post('/confirm', function(req, res, next) {
-	var flight = req.query.tripNumber;
-	var seatType = req.query.seatType;
-	var seatNumbers = req.query.seatNumbers;
+router.get('/reserve', function(req, res, next) {
+	var typeOfSeat = req.query.typeOfSeat;
 
-	console.log("Params " + flight + "+" + seatType + "+" + seatNumbers);
-	rpc_client.reserverFlight(flight, seatType, seatNumbers, function(response) {
-		console.log("Web server receives response: " + response);
-		results = [];
-		if(response == undefined || response == null) {
-			console.log("Reservation failure.");
-			res.render('detail', 
-				{title: TITLE,
-				 message: "The reservation is not available. <a href = '/'> Back to home </a>"
-			});
-		} else {
-			result = response;
-			console.log("Reservation successes.");
-			res.render('confirm', {title: TITLE});
-		}
+	if(typeOfSeat != "Coach" && typeOfSeat != "FirstClass") {
+		console.log("Error typeOfSeat");
+		res.render('confirm', {
+			title: TITLE,
+			message: "Wrong typeOfSeat"
+		});
+	}
+
+	var trip_depart = raw_flight_depart_c[selectTrip.depart.tripid].value;
+	var trip_return = raw_flight_return_c[selectTrip.return.tripid].value;
+	input = [];
+	for(i = 0; i <= trip_depart.length - 1; i++) {
+		var query = "";
+		query += trip_depart[i].Number + " " + trip_depart[i].CodeDepart + " " + trip_depart[i].TimeDepart;
+		input.push(query);
+	}
+
+	for(i = 0; i <= trip_return.length - 1; i++) {
+		var query = "";
+		query += trip_return[i].Number + " " + trip_return[i].CodeDepart + " " + trip_return[i].TimeDepart;
+		input.push(query);
+	}
+	var result = {};
+	if(RoundTrip == "True" && selectTrip.length == 2) {
+		rpc_client.reserveFlight(input, typeOfSeat, function(response) {
+			console.log("Web server receives response for reserveFlight");
+			if(response == undefined || response == null) {
+				console.log("Reservation failure.");
+			} else {
+				var raw_results = JSON.parse(response);
+				result = raw_results.result;	
+			}
+		});
+	} else if(RoundTrip == null && selectTrip.length == 1) {
+		rpc_client.reserveFlight(input, typeOfSeat, function(response) {
+			console.log("Web server receives response for reserveFlight");
+			if(response == undefined || response == null) {
+				console.log("Reservation failure.");
+			} else {
+				var raw_results = JSON.parse(response);
+				result = raw_results.result;
+			}
+		});
+	}
+
+	res.render('confirm', {
+		title: TITLE,
+		result: result
 	});
 });
+
+
 
 function sortByPrice(flight_depart_display, callback) {
 	response = [];
@@ -420,5 +521,38 @@ function sortByDuration(flight_depart_display, callback) {
 	response = [];
 	callback(response);
 }
+
+function getLocalTime(code, GMT) {
+	
+	//console.log(offset.BOS);
+	//console.log(offset[code]);
+	var off = offset[code];
+	var local = new Date(Date.parse(GMT) + off);
+	var result = local.getUTCDate() + "/" + (local.getUTCMonth() + 1).valueOf() + " " + local.getUTCHours() + ":" + local.getUTCMinutes();
+	//console.log(code + " / " + GMT + " / " + result);
+	return result;
+}
+
+function filterResultbyLegs(leg, list) {
+	var id = [];
+	if(leg.One == "True") {
+		id.push(1);
+	}
+	if(leg.Two == "True") {
+		id.push(2);
+	}
+	if(leg.Three == "True") {
+		id.push(3);
+	}
+	var result = [];
+	for(i = 0; i <= list.length - 1; i++) {
+		console.log(list[i].info.legs);
+		if (id.includes(list[i].info.legs)) {
+			result.push(list[i]);
+		}
+	}
+	return result;
+}
+
 
 module.exports = router;

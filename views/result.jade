@@ -48,7 +48,10 @@ html(lang= "en")
 		.div
 			if RoundTrip
 				.col-md-2
-					.btn.btn-primary(value="Reserve") Reserve
+					if selectTrip.depart != null && selectTrip.return != null
+						a.btn.btn-primary(href="/reserve", value="Reserve", class="active") Reserve
+					else
+						.btn.btn-primary(value="Reserve", class="inactive",disabled) Reserve
 				.col-md-5
 					.container-fluid
 						if selectTrip.depart != null
@@ -58,7 +61,7 @@ html(lang= "en")
 										.col-md-4(class="h4")
 											p Selected Departing Trip
 										.col-md-1     
-											a.btn.btn-primary.pull-right(href="#", type="button") Unselect
+											a.btn.btn-primary.pull-right(href="/unselect?type=depart", type="button") Unselect
 								.panel-body 
 									p #{selectTrip.depart.info.depart} to #{selectTrip.depart.info.arrival} 
 									p #{selectTrip.depart.info.departTime} - #{selectTrip.depart.info.arrivalTime}
@@ -77,7 +80,7 @@ html(lang= "en")
 										.col-md-4(class="h4")
 											p Selected Returning Trip
 										.col-md-1     
-											a.btn.btn-primary.pull-right(href="#", type="button") Unselect
+											a.btn.btn-primary.pull-right(href="/unselect?type=return", type="button") Unselect
 								.panel-body
 									if selectTrip.return != null
 										p #{selectTrip.return.info.depart} to #{selectTrip.return.info.arrival} 
@@ -89,7 +92,10 @@ html(lang= "en")
 
 			else
 				.col-md-2
-					.btn.btn-primary(value="Reserve") Reserve
+					if selectTrip.depart != null
+						a.btn.btn-primary(href="/reserve", value="Reserve", class="active") Reserve
+					else
+						.btn.btn-primary(value="Reserve", class="inactive", disabled) Reserve
 				.col-md-8
 					.container-fluid
 						if selectTrip.depart != null
@@ -99,7 +105,7 @@ html(lang= "en")
 										.col-md-4(class="h4")
 											p Selected Departing Trip
 										.col-md-1     
-											a.btn.btn-primary.pull-right(href="#", type="button") Unselect
+											a.btn.btn-primary.pull-right(href="/unselect?type=depart", type="button") Unselect
 								.panel-body
 									p #{selectTrip.depart.info.depart} to #{selectTrip.depart.info.arrival} 
 									p #{selectTrip.depart.info.departTime} - #{selectTrip.depart.info.arrivalTime}
@@ -114,25 +120,49 @@ html(lang= "en")
 		.div
 			.container-fuild
 				.col-md-2
-					.checkbox
-						label
-							input(type="checkbox", value="Direct Flight")
-							| All
+					if oneLeg == "True" && twoLeg == "True" && threeLeg == "True"
+						.checkbox
+							label
+								input(type="checkbox", value="Direct Flight", aria-checked="true")
+								| All
+					else 
+						.checkbox
+							label
+								input(type="checkbox", value="Direct Flight", aria-checked="false")
+								| All
 
-					.checkbox
-						label
-							input(type="checkbox", value="Direct Flight")
-							| Direct Flight
-								
-					.checkbox
-						label
-							input(type="checkbox", value="Two legs")
-							| Two legs
-								
-					.checkbox
-						label
-							input(type="checkbox", value="Three legs")
-							| Three legs
+					if oneLeg == "True"
+						.checkbox
+							label
+								input(type="checkbox", value="Direct Flight", aria-checked="true")
+								| Direct Flight
+					else
+						.checkbox
+							label
+								input(type="checkbox", value="Direct Flight", aria-checked="false")
+								| Direct Flight
+					
+					if twoLeg == "True"
+						.checkbox
+							label
+								input(type="checkbox", value="Two legs", aria-checked="true")
+								| Two legs
+					else
+						.checkbox
+							label
+								input(type="checkbox", value="Two legs", aria-checked="false")
+								| Two legs
+					
+					if threeLeg == "True"		
+						.checkbox
+							label
+								input(type="checkbox", value="Three legs", aria-checked="true")
+								| Three legs
+					else
+						.checkbox
+							label
+								input(type="checkbox", value="Three legs", aria-checked="false")
+								| Three legs
 				if RoundTrip
 					.col-md-5
 						table(style="table-layout: fixed;")
@@ -167,11 +197,11 @@ html(lang= "en")
 															a.btn.btn-link(href='/detail?id=#{item.tripid}&type=depart&sort=#{sort}',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
 															if selectTrip.depart != null
 																if item.tripid == selectTrip.depart.tripid
-																	a.btn.btn-link(href="/unselect?type=depart&sort=#{sort}", name="unselect", role="button", aria-pressed='true', value="Unselect", type="submit") Unselect
+																	a.btn.btn-link(href="/unselect?type=depart", name="unselect", role="button", aria-pressed='true', value="Unselect", type="submit") Unselect
 																else
-																	a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=depart&sort=#{sort}", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+																	a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=depart", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 															else
-																a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=depart&sort=#{sort}", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+																a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=depart", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 										
 
 										else
@@ -205,14 +235,14 @@ html(lang= "en")
 														.p Duration: #{item.info.flightTime} Minutes
 													td.text-center
 														.btn-group-vertical
-															a.btn.btn-link(href='/detail?id=#{item.tripid}&type=return&sort=#{sort}',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
+															a.btn.btn-link(href='/detail?id=#{item.tripid}&type=return',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
 															if selectTrip.return != null
 																if item.tripid == selectTrip.return.tripid
-																	a.btn.btn-link(href="/unselect?type=return&sort=#{sort}",name="usselect", role="button", aria-pressed='true', value="Unelect", type="submit") Unselect
+																	a.btn.btn-link(href="/unselect?type=return",name="usselect", role="button", aria-pressed='true', value="Unelect", type="submit") Unselect
 																else
-																	a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=return&sort=#{sort}", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+																	a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=return", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 															else
-																a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=return&sort=#{sort}", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+																a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=return", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 										
 
 										else
@@ -248,14 +278,14 @@ html(lang= "en")
 														.p Duration: #{item.info.flightTime} Minutes
 													td.text-center
 														.btn-group-vertical
-															a.btn.btn-link(href='/detail?id=#{item.tripid}&type=depart&sort=#{sort}',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
+															a.btn.btn-link(href='/detail?id=#{item.tripid}&type=depart',name="getDetails", role="button", aria-pressed='true', value="Details", type="submit") Details
 															if selectTrip.depart != null
 																if item.tripid == selectTrip.depart.tripid
-																	a.btn.btn-link(href="/unselect?type=depart&sort=#{sort}",name="unselect", role="button", aria-pressed='true', value="Unselect", type="submit") Unselect
+																	a.btn.btn-link(href="/unselect?type=depart",name="unselect", role="button", aria-pressed='true', value="Unselect", type="submit") Unselect
 																else
-																	a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=depart&sort=#{sort}", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+																	a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=depart", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 															else
-																a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=depart&sort=#{sort}", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
+																a.btn.btn-link(href="/select?tripid=#{item.tripid}&type=depart", name="select", role="button", aria-pressed='true', value="Select", type="submit") Select
 																
 
 										else

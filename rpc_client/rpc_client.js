@@ -1,5 +1,5 @@
 var java = require("java");
-//java.classpath.push("./rpc_client/src");
+//java.classpath.push("./rpc_client/test.jar");
 java.classpath.push('./rpc_client/FlightSys.jar');
 
 var client = java.newInstanceSync("ExampleClient");
@@ -12,8 +12,8 @@ function searchFlight(depAIR, arrAIR, depTime, retTime, callback) {
 }
 
 
-function reserveFlight(flight, seatType, seatNumbers, callback) {
-	var resp = client.reserverFlightSync("reserverFlight", [flight, seatType, seatNumbers]);
+function reserveFlight(flight, seatType, callback) {
+	var resp = client.reserverFlightSync("reserverFlight", [seatType, flight]);
 	console.log(resp);
 	callback(resp);
 	console.log("Finished call rpc.");

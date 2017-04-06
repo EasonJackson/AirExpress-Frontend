@@ -21,7 +21,7 @@ html(lang= "en")
 			.col-md-10
 				panel.panel-default(id="flightDetail", method="post", action="/confirm")
 					.panel-heading
-						h2 Flight Infomation
+						h2 Flight Infomation : #{type}
 					.panel-body
 						
 
@@ -36,7 +36,7 @@ html(lang= "en")
 			.col-md-10
 				.div
 					table.table.table-hover
-						thead(class="h4")
+						thead(class="h4") 
 							tr
 								th Flight Number
 								th Departure
@@ -52,8 +52,8 @@ html(lang= "en")
 									td #{flight.CodeArrival} : #{flight.TimeArrival}
 									td #{flight.FlightTime} Minutes
 									td 
-										p Coach: $#{flight.PriceCoach} / #{flight.SeatsCoach} remaining
-										p Firstclass: $#{flight.PriceFirstclass} / #{flight.SeatsFirstclass} remaining
+										p Coach: $#{flight.PriceCoach} / #{flight.SeatsCoach} booked
+										p Firstclass: $#{flight.PriceFirstclass} / #{flight.SeatsFirstclass} booked
 								
 			.col-md-1
 				p
@@ -65,6 +65,6 @@ html(lang= "en")
 			.col-md-8
 				.nav.navbar-right
 					.div.text-right
-						a.btn.btn-default(href="/result?tripid=#{tripid}&type=#{type}&sort=#{sort}",type="submit", style="margin-right: 10px; font-size: 110%", value="select", method="get") Select
-						a.btn.btn-default(type="submit", style="margin-right: 10px; font-size: 110%", value="back", method="post", action="/") Back
+						a.btn.btn-default(href="/select?tripid=#{tripid}&type=#{type}",type="submit", style="margin-right: 10px; font-size: 110%", value="select", method="get") Select
+						a.btn.btn-default(href="/result", type="submit", style="margin-right: 10px; font-size: 110%", value="back") Back
 						

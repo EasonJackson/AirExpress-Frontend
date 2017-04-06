@@ -1,9 +1,12 @@
 var Geoclient = require('./GetGeo');
+var sync = require('synchronize');
 var fs = require('fs');
-var Airports;
+var Airports =[];
+var Airports_local = [];
+var offset = [];
 
 
-fs.readFile("Airports.txt", "utf8", function(error, data, next) {
+fs.readFile("test.txt", "utf8", function(error, data, next) {
     if(error) {
     	/*
     	rpc_client.getAirports(function(response) {
@@ -30,12 +33,67 @@ fs.readFile("Airports.txt", "utf8", function(error, data, next) {
 		});*/
 		console.log(error);
     } else {
-    	while(data === undefined) {
-    		require('deasync').runLoopOnce();
-    	}
     	Airports = JSON.parse(data);
     	//console.log("Contents of file: " + data);
-    	console.log(Airports);
+    	//console.log(Airports);
     	console.log("Airport loaded.");
+        d();  
 	}
 });
+   
+function d() {
+    for(i = 0; i <= Airports.length - 1; i++) {
+        console.log(Airports[i].Latitude + "," + Airports[i].Longitude);
+        // var date = Geoclient.getTimezone(Airports[i].Latitude, Airports[i].Longitude, function(response) {
+        //    offset.push(response.json);
+        //    console.log(offset);
+        // });
+        // var date = Geoclient.getTimezone(Airports[i].Latitude, Airports[i].Longitude);
+        // console.log(date);
+        // var data = sync.await(Geoclient.getTimezone(Airports[i].Latitude, Airports[i].Longitude, sync.defer()));
+        // offset.push(date);
+        // console.log(offset);
+        sync(Geoclient, 'getTimezone');
+        sync.fiber(function () {
+            try{
+                var data = sync.await(Geoclient.getTimezone(Airports[i].Latitude, Airports[i].Longitude, sync.defer()));
+                console.log(data);
+                offset.push(data);
+            } catch (err) {
+                console.log(err);
+            }
+        })
+        console.log(offset.length);
+    }
+}
+
+
+
+function a(){
+
+}
+
+    function b(req, res, next) {
+        var query = {};
+        query.Name = Airports[i].Name;
+        query.Code = Airports[i].Code;
+        query.Latitude = Airports[i].Latitude;
+        query.Longitude = Airports[i].Longitude;
+        query.Offset = 1000 * offset.rawOffset + 1000 * offset.dstOffset;
+        Airports_local.push(query);
+        next();
+    }
+    
+    function c(req, res) {
+        fs.writeFile("Test_Offset.json", Airports_local, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+        });
+    }
+
+ 
+
+
+
+
