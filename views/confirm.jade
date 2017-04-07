@@ -14,7 +14,86 @@ html(lang= "en")
 	head
 		title= title
 
-	body
-		.container-fluid
-		.p
-			h1 Reservation Confirmed.
+	body(style="padding-bottom:10rem; padding-top: 10rem")
+	.container-fluid
+		.col-md-1
+			p
+		.col-md-10
+			panel.panel-default(id="flightDetail", method="post", action="/confirm")
+				.panel-heading
+					h2 Flight Reservation
+				.panel-body
+					
+
+		.col-md-1
+			p
+
+	.col-md-12
+
+	.container-fluid
+		.col-md-1
+			p
+		.col-md-10
+			.div
+				table.table.table-hover
+					thead(class="h4") 
+						tr
+							th Depart:
+							th Flight Number
+							th From
+							th To
+							th Flight Time
+							th Prices and Seats					
+					tbody
+						tr
+							td
+							td #{selectTrip.depart.info.first_flightNumber} 
+							td #{selectTrip.depart.info.depart} : #{selectTrip.depart.info.departTime}
+							td #{selectTrip.depart.info.arrival} : #{selectTrip.depart.info.arrivalTime}
+							td #{selectTrip.depart.info.flightTime} Minutes
+							td 
+								p Coach: $#{selectTrip.depart.info.price_coach}
+								p Firstclass: $#{selectTrip.depart.info.price_firstclass}
+
+				table.table.table-hover
+					thead(class="h4") 
+						tr
+							th Return:
+							th Flight Number
+							th From
+							th To
+							th Flight Time
+							th Prices
+					tbody
+						tr
+							td
+							td #{selectTrip.return.info.first_flightNumber} 
+							td #{selectTrip.return.info.depart} : #{selectTrip.return.info.departTime}
+							td #{selectTrip.return.info.arrival} : #{selectTrip.return.info.arrivalTime}
+							td #{selectTrip.return.info.flightTime} Minutes
+							td 
+								p Coach: $#{selectTrip.return.info.price_coach}
+								p Firstclass: $#{selectTrip.return.info.price_firstclass}
+				table.table.table-hover
+					thead(class="h4") Total: 
+						p $#{total_coach} Coach
+						p $#{total_firstclass} FirstClass
+						
+		.col-md-1
+			p
+
+	.col-md-12
+	.container-fluid
+			.col-md-2
+			.col-md-8
+				.nav.navbar-right
+					.div.text-right
+						a.btn.btn-default(href="/confirm?typeOfSeat=Coach",type="submit", style="margin-right: 10px; font-size: 110%", value="select", method="get") Reserve Coach
+						a.btn.btn-default(href="/confirm?typeOfSeat=FirstClass",type="submit", style="margin-right: 10px; font-size: 110%", value="select", method="get") Reserve FirstClass
+						a.btn.btn-default(href="/result", type="submit", style="margin-right: 10px; font-size: 110%", value="back") Back
+
+	- if(result)
+		.col-md-4
+		.col-md-4
+			p #{result}
+		.col-md-4

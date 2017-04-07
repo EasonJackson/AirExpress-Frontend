@@ -122,47 +122,47 @@ html(lang= "en")
 				.col-md-2
 					if oneLeg == "True" && twoLeg == "True" && threeLeg == "True"
 						.checkbox
-							label
-								input(type="checkbox", value="Direct Flight", aria-checked="true")
+							label.btn.btn-link
+								input(type="checkbox", value="Direct Flight", checked="checked")
 								| All
 					else 
 						.checkbox
-							label
-								input(type="checkbox", value="Direct Flight", aria-checked="false")
-								| All
+							label.btn.btn-link
+								input(type="checkbox", value="Direct Flight")
+								a(href="/leg?one=True&two=True&three=True") All
 
 					if oneLeg == "True"
 						.checkbox
-							label
-								input(type="checkbox", value="Direct Flight", aria-checked="true")
-								| Direct Flight
+							label.btn.btn-link
+								input(type="checkbox", value="Direct Flight", checked="checked")
+								a(href="/leg?one=False") Direct Flight
 					else
 						.checkbox
-							label
-								input(type="checkbox", value="Direct Flight", aria-checked="false")
-								| Direct Flight
+							label.btn.btn-link
+								input(type="checkbox", value="Direct Flight")
+								a(href="/leg?one=True") Direct Flight
 					
 					if twoLeg == "True"
 						.checkbox
-							label
-								input(type="checkbox", value="Two legs", aria-checked="true")
-								| Two legs
+							label.btn.btn-link
+								input(type="checkbox", value="Two legs", checked="checked")
+								a(href="/leg?two=False") Two legs
 					else
 						.checkbox
-							label
-								input(type="checkbox", value="Two legs", aria-checked="false")
-								| Two legs
+							label.btn.btn-link
+								input(type="checkbox", value="Two legs")
+								a(href="/leg?two=True") Two legs
 					
 					if threeLeg == "True"		
 						.checkbox
-							label
-								input(type="checkbox", value="Three legs", aria-checked="true")
-								| Three legs
+							label.btn.btn-link
+								input(type="checkbox", value="Three legs", checked="checked")
+								a(href="/leg?three=False") Three legs
 					else
 						.checkbox
-							label
-								input(type="checkbox", value="Three legs", aria-checked="false")
-								| Three legs
+							label.btn.btn-link
+								input(type="checkbox", value="Three legs")
+								a(href="/leg?three=True") Three legs
 				if RoundTrip
 					.col-md-5
 						table(style="table-layout: fixed;")
