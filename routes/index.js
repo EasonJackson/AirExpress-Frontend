@@ -476,13 +476,19 @@ router.get('/detail', function(req, res, next) {
 });
 
 router.get('/reserve', function(req, res, next) {
-	if(RoundTrip == "True" && selectTrip.depart != null && selectTrip.return != null
-		|| RoundTrip == null && selectTrip.depart != null && selectTrip.return == null) {
+	if(RoundTrip == "True" && selectTrip.depart != null && selectTrip.return != null) {
 		res.render('confirm', {
 			title: TITLE,
 			selectTrip: selectTrip,
 			total_coach: (parseFloat(selectTrip.depart.info.price_coach) + parseFloat(selectTrip.return.info.price_coach)).toFixed(2),
 			total_firstclass: (parseFloat(selectTrip.depart.info.price_firstclass) + parseFloat(selectTrip.return.info.price_firstclass)).toFixed(2)
+		});
+	} else if(RoundTrip == null && selectTrip.depart != null && selectTrip.return == null) {
+		res.render('confirm', {
+			title: TITLE,
+			selectTrip: selectTrip,
+			total_coach: (parseFloat(selectTrip.depart.info.price_coach)).toFixed(2),
+			total_firstclass: (parseFloat(selectTrip.depart.info.price_firstclass)).toFixed(2)
 		});
 	}
 });
@@ -499,7 +505,10 @@ router.get('/confirm', function(req, res, next) {
 	}
 
 	var trip_depart = raw_flight_depart_c[selectTrip.depart.tripid].value;
-	var trip_return = raw_flight_return_c[selectTrip.return.tripid].value;
+	var trip_return = [];
+	if(selectTrip.return != undefined || selectTrip.return != null) {
+		trip_return = raw_flight_return_c[selectTrip.return.tripid].value;
+	} 
 
 	console.log(trip_depart);
 	console.log(trip_return);
@@ -517,8 +526,8 @@ router.get('/confirm', function(req, res, next) {
 	
 	console.log(input);
 	var result = {};
-	if(RoundTrip == "True" && selectTrip.length == 2) {
-		rpc_client.reserveFlight(input, typeOfSeat, function(response) {
+	if(RoundTrip == "True") {
+		rpc_client.reserveTrip(input, typeOfSeat, function(response) {
 			console.log("Web server receives response for reserveFlight");
 			if(response == undefined || response == null) {
 				console.log("Reservation failure.");
@@ -527,8 +536,8 @@ router.get('/confirm', function(req, res, next) {
 				result = raw_results.result;	
 			}
 		});
-	} else if(RoundTrip == null && selectTrip.length == 1) {
-		rpc_client.reserveFlight(input, typeOfSeat, function(response) {
+	} else if(RoundTrip == null) {
+		rpc_client.reserveTrip(input, typeOfSeat, function(response) {
 			console.log("Web server receives response for reserveFlight");
 			if(response == undefined || response == null) {
 				console.log("Reservation failure.");
@@ -537,16 +546,29 @@ router.get('/confirm', function(req, res, next) {
 				result = raw_results.result;
 			}
 		});
+	}
 
-		res.render('confirm', {
+	
+	if(RoundTrip == "True" && selectTrip.depart != null && selectTrip.return != null) {
+		res.render('confirm_fin', {
 			title: TITLE,
 			selectTrip: selectTrip,
-			result: result,
+			seat: typeOfSeat,
 			total_coach: (parseFloat(selectTrip.depart.info.price_coach) + parseFloat(selectTrip.return.info.price_coach)).toFixed(2),
-			total_firstclass: (parseFloat(selectTrip.depart.info.price_firstclass) + parseFloat(selectTrip.return.info.price_firstclass)).toFixed(2)
+			total_firstclass: (parseFloat(selectTrip.depart.info.price_firstclass) + parseFloat(selectTrip.return.info.price_firstclass)).toFixed(2),
+			result: result
+		});
+	} else if(RoundTrip == null && selectTrip.depart != null && selectTrip.return == null) {
+		res.render('confirm_fin', {
+			title: TITLE,
+			selectTrip: selectTrip,
+			seat: typeOfSeat,
+			total_coach: (parseFloat(selectTrip.depart.info.price_coach)).toFixed(2),
+			total_firstclass: (parseFloat(selectTrip.depart.info.price_firstclass)).toFixed(2),
+			result: result
 		});
 	}
-})
+});
 
 function sortByPrice(flight_depart_display, callback) {
 	response = [];

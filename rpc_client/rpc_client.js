@@ -12,8 +12,9 @@ function searchFlight(depAIR, arrAIR, depTime, retTime, callback) {
 }
 
 
-function reserveFlight(flight, seatType, callback) {
-	var resp = client.reserverFlightSync("reserverFlight", [seatType, flight]);
+function reserveTrip(flight, seatType, callback) {
+	console.log("reserveTrip gets called");
+	var resp = client.reserveTripSync("reserveTrip", [seatType, flight]);
 	console.log(resp);
 	callback(resp);
 	console.log("Finished call rpc.");
@@ -27,6 +28,6 @@ function getAirports(callback) {
 
 module.exports = {
 	searchFlight: searchFlight,
-	reserveFlight: reserveFlight,
+	reserveTrip: reserveTrip,
 	getAirports: getAirports
 };
